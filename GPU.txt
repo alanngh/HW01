@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define dfloat double
+
+typedef struct {
+	int Nelements; // triangle count for mesh
+	int Nvertices; // vertex count for mesh
+
+	dfloat *Vx; // x-coordinates of verteces in mesh
+	dfloat *VY; // y-coordinates of vertices in mesh
+
+	int *EToV;  // element-to-vertex connectivity array
+
+} mesh;
+
+mesh *meshReader2D(char *fileName){
+
+	mesh (*msh) calloc(1,sizeof(mesh));
+
+	FILE *meshFile = fopen(fileName,"r");
+ 	char buf[FUFSIZ];
+	int v,
+	
+	if (meshFile==NULL){
+		printf("mesh file %s did not open, exting\n",meshFile);
+		exit(-1);
+	}
+
+	do {
+		fgets(buf,BUFSIZE,fp);
+	} while(!strstr(buf,"$Nodes"));
+
+	// read in number of vertices
+	fgets(buf,BUFSIZ,fp);
+	sscanf(buf,"%d",&(mesh->Nvertices));
+
+	// red in vertex coordinates
+	for (v=0; v<mesh->Nvertices;++v){
+		
+	}
+
+	fclose(meshFile);
+
+	return msh;
+}
