@@ -60,19 +60,20 @@ int compareOrigins(const void *A, const void *B){
   
 }
 
-
 // Print the information as the table on the lecture notes
 void printFaces(face *fc,int m,int n){
 	int i=0;
-
+	// nodes start at 1 in gmesh
+	// faces start at 0
+	// -1 indicate no exist
 	printf("\ne\tf\tv1\tv2\teN\tfN");
 	for (i=0;i<m*n;++i){
-		printf("\n%d\t%d\t%d\t%d\t%d\t%d",(fc+i)->e+1, (fc+i)->f,(fc+i)->v1,(fc+i)->v2,(fc+i)->eN,(fc+i)->fN);
+		printf("\n%d\t%d\t%d\t%d\t%d\t%d",(fc+i)->e+1, (fc+i)->f,(fc+i)->v1+1,(fc+i)->v2+1,
+			(fc+i)->eN>=0?(fc+i)->eN+1:(fc+i)->eN,(fc+i)->fN);
 	}
-
 	printf("\n\n");
-
 }
+
 
 // to do: implement comparison function to compare vertices and a function to compare element/face info
 void meshConnectQuad2D(mesh *msh){
@@ -162,17 +163,8 @@ void meshConnectQuad2D(mesh *msh){
 	printf("\nAfter fill in info\n");
 	printFaces(faces,msh->Nelements,msh->Nfaces);
   
-  // sort faces back to their original order
-  qsort(faces, msh->Nelements*msh->Nfaces, sizeof(face), compareOrigins);
-
-  // print faces
- /* for(n=0;n<(msh->Nelements*msh->Nfaces);++n){
-    printf("e=%d, f=%d, eN=%d, fN=%d\n",
-	   faces[n].e,
-	   faces[n].f,
-	   faces[n].eN,
-	   faces[n].fN);
-	}*/
+	// sort faces back to their original order
+  	qsort(faces, msh->Nelements*msh->Nfaces, sizeof(face), compareOrigins);
 
 	printf("\nSort back to initial order\n");
 	printFaces(faces,msh->Nelements,msh->Nfaces);
