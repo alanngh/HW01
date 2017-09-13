@@ -60,8 +60,8 @@ mesh *meshReaderQuad2D(char *fileName){
 	fclose(mshFile);
 
 	// Test Clockwisely
-	int a,b,c,d;
-	float A1, A2;
+	int a,b,c,d , cond;
+	float A1, A2, temp;
 
 	for (e=0;e<msh->Nelements;++e){
 		// index stars at 0 in C but at 1 in Gmsh
@@ -69,24 +69,31 @@ mesh *meshReaderQuad2D(char *fileName){
 	 	b = msh->EToV[e*msh->Nverts+1];
 		c = msh->EToV[e*msh->Nverts+2];
 		d = msh->EToV[e*msh->Nverts+3];
-		printf("\nElement %d with nodes a=%d b=%d c=%d d=%d\n",e+1,a,b,c,d);
+		printf("\nElement %d with nodes a=%d b=%d c=%d d=%d\n",e+1,a+1,b+1,c+1,d+1);
 		printf("coordinates for node a =  %d  are  ( %f , %f )\n",a+1, msh->VX[a],msh->VY[a]);
 		printf("coordinates for node b =  %d  are  ( %f , %f )\n",b+1, msh->VX[b],msh->VY[b]);
 		printf("coordinates for node c =  %d  are  ( %f , %f )\n",c+1, msh->VX[c],msh->VY[c]);
 		printf("coordinates for node d =  %d  are  ( %f , %f )\n",d+1, msh->VX[d],msh->VY[d]);
 
+		cond=0;
 
-		A1 = (msh->VX[a]*msh->VY[b] + msh->VX[b]*msh->VY[d] + msh->VX[d]*msh->VY[a]) -(msh->VX[d]*msh->VY[b] + msh->VX[a]*msh->VY[d] + msh->VX[b]*msh->VY[a]); 
-		A2 = (msh->VX[b]*msh->VY[c] + msh->VX[c]*msh->VY[d] + msh->VX[d]*msh->VY[b]) -(msh->VX[d]*msh->VY[c] + msh->VX[b]*msh->VY[d] + msh->VX[c]*msh->VY[b]);
+		do{
+			A1 = (msh->VX[a]*msh->VY[b] + msh->VX[b]*msh->VY[c] + msh->VX[c]*msh->VY[a]) -(msh->VX[c]*msh->VY[b] + msh->VX[a]*msh->VY[c] + msh->VX[b]*msh->VY[a]); 
+			A2 = (msh->VX[a]*msh->VY[c] + msh->VX[c]*msh->VY[d] + msh->VX[d]*msh->VY[a]) -(msh->VX[d]*msh->VY[c] + msh->VX[a]*msh->VY[d] + msh->VX[c]*msh->VY[a]);
 
-		
-		printf("A(abd) = %lf and A(bcd)= %f\n",A1/2,A2/2);
+			printf("A1  =  %f  and   A2 = %f \n",A1,A2);
+			printf("Order : %d  %d   %d   %d \n",a+1,b+1,c+1,d+1);
 
-		if (A1*A2>0) printf("Test done sucessfully at element %d\n",e+1);
-		else{
-			printf("There are problems with the element %d, exiting...\n\n",e+1);
-			exit(-1);
-		}
+			if (A1 >0 && A2 > 0) cond =1;
+
+			if (A1 < 0){
+				temp = b; b = c; c = temp;
+			}
+
+			if (A2 < 0){
+				temp = c; c = d; d = temp;
+			}
+		} while (cond != 1);
 	} 
 
 	return msh;
