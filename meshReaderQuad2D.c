@@ -94,6 +94,10 @@ mesh *meshReaderQuad2D(char *fileName){
 				temp = c; c = d; d = temp;
 			}
 		} while (cond != 1);
+		msh->EToV[e*msh->Nverts+0]=a;
+	 	msh->EToV[e*msh->Nverts+1]=b;
+		msh->EToV[e*msh->Nverts+2]=c;
+		msh->EToV[e*msh->Nverts+3]=d;
 	} 
 
 	return msh;
